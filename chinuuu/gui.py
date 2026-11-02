@@ -114,6 +114,26 @@ class ChinuuuDesktopApp:
         self.transcript.tag_configure("system", foreground="#e6bf78", font=("Segoe UI Semibold", 9))
         self.transcript.tag_configure("body", foreground="#e7edf5")
 
+        # A compact, dependency-free animated running cat appears while the
+        # assistant is working. It is separate from the transcript so it never
+        # pollutes conversation history and can be hidden cleanly on completion.
+        self.thinking_frame = tk.Frame(body, bg="#151d29", padx=8, pady=2)
+        self.thinking_canvas = tk.Canvas(
+            self.thinking_frame, width=120, height=30,
+            bg="#151d29", highlightthickness=0, bd=0,
+        )
+        self.thinking_canvas.pack(side="left")
+        self.thinking_label = tk.Label(
+            self.thinking_frame, text="Chinuuu is thinking",
+            bg="#151d29", fg="#9edfff", anchor="w",
+            font=("Segoe UI Semibold", 10), padx=8,
+        )
+        self.thinking_label.pack(side="left", fill="x", expand=True)
+        self._thinking_visible = False
+        self._thinking_frame_index = 0
+        self._thinking_after_id = None
+        self._thinking_message = "Chinuuu is thinking"
+
         compose = tk.Frame(self.root, bg="#10151e", padx=16, pady=12)
         compose.pack(fill="x")
         input_column = tk.Frame(compose, bg="#10151e")
@@ -145,6 +165,131 @@ class ChinuuuDesktopApp:
 
     def _set_status(self, value: str) -> None:
         self.status.configure(text=value)
+
+    def _show_thinking(self, message: str = "Chinuuu is thinking") -> None:
+        """Show the compact cat and keep exactly one animation loop scheduled."""
+        self._thinking_message = message
+        if not self._thinking_visible:
+            self._thinking_visible = True
+            self.thinking_frame.pack(fill="x", pady=(4, 0))
+            self._thinking_frame_index = 0
+        # Voice capture changes its label to "thinking" after transcription.
+        # Do not start a second timer when the indicator is already animating.
+        if self._thinking_after_id is None:
+            self._animate_thinking()
+
+    def _hide_thinking(self) -> None:
+        """Stop scheduled animation and hide the indicator."""
+        self._thinking_visible = False
+        if self._thinking_after_id is not None:
+            try:
+                self.root.after_cancel(self._thinking_after_id)
+            except tk.TclError:
+                pass
+            self._thinking_after_id = None
+        self.thinking_frame.pack_forget()
+
+    def _draw_running_cat(self, x: int, phase: int) -> None:
+        """Draw a tiny, rounded chibi cat with a readable four-step run cycle."""
+        canvas = self.thinking_canvas
+        canvas.delete("all")
+        track = "#294456"
+        fur = "#a9e7ff"
+        fur_light = "#d8f5ff"
+        ear_inner = "#ff9fbd"
+        ink = "#26384a"
+        cheek = "#ff9fbd"
+
+        # Fine running track; the character stays deliberately small.
+        canvas.create_line(3, 26, 117, 26, fill=track, width=1)
+
+        stride = phase % 4
+        bounce = (0, -1, 0, -1)[stride]
+        leg_sets = (
+            ((-2, 3), (2, -1), (-1, 2), (1, -2)),
+            ((-1, 1), (1, -2), (2, -1), (-2, 2)),
+            ((2, -1), (-2, 3), (1, -2), (-1, 2)),
+            ((1, -2), (-1, 2), (-2, 3), (2, -1)),
+        )
+        legs = leg_sets[stride]
+
+        # Tail with a rounded curl.
+        canvas.create_line(
+            x + 7, 17 + bounce, x + 3, 13 + bounce,
+            x, 14 + bounce, x - 1, 11 + bounce,
+            fill=fur, width=2, capstyle="round", joinstyle="round", smooth=True,
+        )
+
+        # Four tiny paws, animated in alternating pairs.
+        leg_origins = ((x + 10, 20), (x + 15, 20), (x + 20, 19), (x + 23, 18))
+        for (lx, ly), (dx, dy) in zip(leg_origins, legs):
+            canvas.create_line(
+                lx, ly + bounce, lx + dx, 25 + dy,
+                fill=fur, width=2, capstyle="round",
+            )
+
+        # Soft rounded body and oversized kitten head.
+        canvas.create_oval(
+            x + 5, 12 + bounce, x + 23, 22 + bounce,
+            fill=fur, outline=fur,
+        )
+        canvas.create_oval(
+            x + 17, 7 + bounce, x + 30, 20 + bounce,
+            fill=fur_light, outline=fur_light,
+        )
+
+        # Pointed ears with pink inner details.
+        canvas.create_polygon(
+            x + 18, 11 + bounce, x + 19, 4 + bounce, x + 24, 9 + bounce,
+            fill=fur_light, outline=fur_light,
+        )
+        canvas.create_polygon(
+            x + 24, 9 + bounce, x + 29, 4 + bounce, x + 30, 13 + bounce,
+            fill=fur_light, outline=fur_light,
+        )
+        canvas.create_polygon(
+            x + 20, 9 + bounce, x + 20, 6 + bounce, x + 22, 9 + bounce,
+            fill=ear_inner, outline=ear_inner,
+        )
+        canvas.create_polygon(
+            x + 26, 9 + bounce, x + 28, 6 + bounce, x + 28, 10 + bounce,
+            fill=ear_inner, outline=ear_inner,
+        )
+
+        # Eyes, nose and rosy cheeks make the face read as a kitten, not a blob.
+        canvas.create_oval(
+            x + 21, 13 + bounce, x + 23, 16 + bounce,
+            fill=ink, outline=ink,
+        )
+        canvas.create_oval(
+            x + 27, 13 + bounce, x + 29, 16 + bounce,
+            fill=ink, outline=ink,
+        )
+        canvas.create_oval(
+            x + 24, 16 + bounce, x + 26, 18 + bounce,
+            fill="#ff8eaa", outline="#ff8eaa",
+        )
+        canvas.create_oval(
+            x + 18, 17 + bounce, x + 21, 19 + bounce,
+            fill=cheek, outline=cheek,
+        )
+        canvas.create_oval(
+            x + 29, 17 + bounce, x + 31, 19 + bounce,
+            fill=cheek, outline=cheek,
+        )
+
+    def _animate_thinking(self) -> None:
+        # The callback currently being executed is no longer pending.
+        self._thinking_after_id = None
+        if not self._thinking_visible:
+            return
+        index = self._thinking_frame_index
+        x = 10 + (index * 4) % 105
+        self._draw_running_cat(x, index)
+        dots = "." * (index % 4)
+        self.thinking_label.configure(text=f"{self._thinking_message}{dots}")
+        self._thinking_frame_index += 1
+        self._thinking_after_id = self.root.after(85, self._animate_thinking)
 
     def _toggle_speech(self) -> None:
         self.speak_responses = bool(self.speak_var.get())
@@ -187,6 +332,7 @@ class ChinuuuDesktopApp:
         self.send_button.configure(state="disabled")
         self._append("ABHI", text)
         self._set_status("Chinuuu is processing locally…")
+        self._show_thinking("Chinuuu is thinking")
         threading.Thread(target=self._respond_worker, args=(text,), daemon=True).start()
 
     def _confirm_from_worker(self, tool_name: str, arguments: dict) -> bool:
@@ -255,6 +401,7 @@ class ChinuuuDesktopApp:
         self.busy = True
         self.send_button.configure(state="disabled")
         self._set_status("Listening for up to six seconds. Audio is processed locally…")
+        self._show_thinking("Listening locally")
         def worker():
             try:
                 model_path = Path(self.settings.voice_model_path)
@@ -290,6 +437,7 @@ class ChinuuuDesktopApp:
             while True:
                 kind, payload = self.events.get_nowait()
                 if kind == "response":
+                    self._hide_thinking()
                     self._append("CHINUUU", payload)
                     self.busy = False
                     self.send_button.configure(state="normal")
@@ -297,8 +445,10 @@ class ChinuuuDesktopApp:
                     self._restart_wakeword()
                 elif kind == "voice_text":
                     self._append("ABHI (VOICE TRANSCRIPTION)", payload)
+                    self._show_thinking("Chinuuu is thinking")
                 elif kind == "error":
                     self._append("SYSTEM ERROR", payload)
+                    self._hide_thinking()
                     self.busy = False
                     self.send_button.configure(state="normal")
                     self._set_status("An error occurred · see transcript")
@@ -322,6 +472,7 @@ class ChinuuuDesktopApp:
 
     def close(self) -> None:
         try:
+            self._hide_thinking()
             if self.wakeword_listener is not None:
                 self.wakeword_listener.stop()
             self.scheduler.stop()

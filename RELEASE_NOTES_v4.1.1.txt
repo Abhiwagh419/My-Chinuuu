@@ -1,0 +1,8 @@
+Chinuuu v4.1.1 — Cute Kitten GUI Refinement
+
+- Replaced the angular cat silhouette with a small rounded kitten design.
+- Added soft facial details, pink inner ears and cheeks, curled tail, and a four-phase paw cycle.
+- Reduced the animation canvas to 120×30 pixels.
+- No new runtime dependencies.
+- Automated suite: 251 passed in the build environment.
+- Windows rendering still requires validation on the target machine.

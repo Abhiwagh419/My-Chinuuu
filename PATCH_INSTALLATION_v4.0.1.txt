@@ -1,0 +1,17 @@
+CHINUUU v4.0.1 UPDATE PATCH
+
+1. Close the Chinuuu GUI and CLI.
+2. Back up config.toml and data/chinuuu.sqlite3.
+3. Extract this patch directly into the existing Chinuuu project root, preserving config.toml, data/, workspace/, and .venv/.
+4. Activate the existing environment:
+   .venv\Scripts\Activate.ps1
+5. Run:
+   python -m pip install -e ".[dev,windows,documents,voice,wakeword,installer]"
+   python -m compileall -q chinuuu tests
+   python -m pytest -q
+6. If tests pass, launch:
+   python gui_entry.py
+
+The animated running cat appears below the conversation transcript while a request is being processed. It disappears after a response or error. Voice requests show a listening label and then a thinking label after transcription.
+
+This is a v4.0.0 to v4.0.1 source patch. It does not modify the SQLite schema, user memory, configuration, workspace, or Ollama models.

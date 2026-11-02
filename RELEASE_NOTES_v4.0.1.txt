@@ -1,0 +1,25 @@
+CHINUUU v4.0.1 — RUNNING CAT PROCESSING INDICATOR
+
+This maintenance release improves GUI feedback during long-running model requests.
+
+NEW
+- A native Tkinter Canvas animation draws a small cyan running cat.
+- The indicator appears after a text request is accepted.
+- Voice capture shows a listening label; after transcription it switches to the thinking label.
+- Animated dots indicate that the request is still active.
+- The indicator is hidden on success and error and its scheduled callback is cancelled on application close.
+- No GIF, network asset, external animation package, or cloud service is required.
+- The animation is a separate GUI element and does not insert fake messages into the conversation transcript.
+
+FILES
+- chinuuu/gui.py
+- chinuuu/__init__.py
+- pyproject.toml
+- tests/test_gui_input.py
+- README.md
+- CHANGELOG.md
+
+VALIDATION
+- Python compilation: passed.
+- Automated test suite: 246 passed in the build environment.
+- This does not replace a visual check on the target Windows desktop.

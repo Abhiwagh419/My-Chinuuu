@@ -1,4 +1,4 @@
-# Chinuuu v4.0.0 Windows acceptance checklist
+# Chinuuu v4.1.0 Windows acceptance checklist
 
 Run after the automated test suite passes. Record observed behaviour; do not mark a feature complete based only on an assistant success message.
 
@@ -12,6 +12,13 @@ Run after the automated test suite passes. Record observed behaviour; do not mar
 - [ ] Stop Ollama during a summary attempt: the user's chat request still completes and the original messages remain intact.
 - [ ] Review agent activity: interrupted runs are labelled as interrupted, not completed.
 - [ ] Confirm no interrupted operation is automatically replayed.
+
+## GUI processing indicator
+- [ ] The running cat is visibly compact and does not dominate the transcript/composer area.
+- [ ] One animation runs during text requests; it starts immediately after sending.
+- [ ] Voice capture shows "Listening locally" and changes to "Chinuuu is thinking" without speeding up or duplicating the animation.
+- [ ] The animation disappears on both response and error.
+- [ ] Closing the GUI cancels the pending animation callback without a Tcl error.
 
 ## GUI input and Control Center
 - [ ] Enter and keypad Enter send a single-line message.

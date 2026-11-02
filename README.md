@@ -1,8 +1,8 @@
-# Chinuuu v4.0.0
+# Chinuuu v4.1.0
 
 **A local-first personal AI assistant for Windows 11.** Chinuuu combines a local Ollama model, SQLite-backed conversation and memory, a bounded tool-execution loop, Windows controls, desktop UI Automation, local document retrieval, offline voice adapters, reminders, local contacts/calendar, and a Tkinter desktop interface.
 
-> **Release status:** v4.0.0 adds durable conversation continuity, relevance-ranked approved memory, stale-run recovery and local health diagnostics. Automated tests and patch replay are validated in the build environment. Hardware- and account-dependent acceptance tests must still be run on the target Windows PC. Do not interpret a passing mocked unit test as proof that a particular Windows driver or app workflow works on every device.
+> **Release status:** v4.1.0 refines the running-cat processing indicator into a small, compact animation and prevents duplicate animation timers during voice-to-thinking transitions. It builds on v4.0.0 durable conversation continuity, relevance-ranked approved memory, stale-run recovery and local health diagnostics. Automated tests and patch replay are validated in the build environment. Hardware- and account-dependent acceptance tests must still be run on the target Windows PC. Do not interpret a passing mocked unit test as proof that a particular Windows driver or app workflow works on every device.
 
 ## 1. Design principles
 
@@ -92,6 +92,18 @@ Or use the provided launchers:
 ```
 
 ## 4. Included capabilities
+
+### v4.1.0 — Compact running-cat indicator and GUI lifecycle hardening
+
+- Reduced the running cat from a large 270×48 canvas with a roughly 64×35 drawing to a compact 150×30 canvas with a roughly 31×20 drawing.
+- Kept the cyan cat, running-leg cycle, motion marks and processing label while reducing the indicator's vertical footprint.
+- Fixed duplicate animation scheduling when voice capture changes from "Listening locally" to "Chinuuu is thinking"; the transition now updates the label without starting another timer loop.
+- Added focused tests for compact indicator geometry, single-timer scheduling, timer rescheduling and clean cancellation.
+- Added a source-based audit report and a final Windows acceptance checklist.
+
+### v4.0.1 — Animated GUI processing feedback
+
+The desktop GUI displays an animated running cat and a live processing label while text or voice requests are active. The indicator is removed when a response or error arrives and is cancelled on shutdown.
 
 ### v4.0.0 — Durable intelligence and operational recovery
 

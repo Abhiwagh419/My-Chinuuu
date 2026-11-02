@@ -1,0 +1,18 @@
+CHINUUU v4.1.1 UPDATE
+Target: existing v4.1.0 project
+
+1. Close Chinuuu GUI and CLI.
+2. Back up config.toml and data/.
+3. Extract this ZIP directly into D:\Projects\Chinuuu (or your actual project root).
+4. Preserve .venv/, config.toml, data/, and workspace/.
+5. Activate your existing virtual environment:
+   .\.venv\Scripts\Activate.ps1
+6. Run:
+   python -m pip install -e ".[dev,windows,documents,voice,wakeword,installer]"
+   python -m compileall -q chinuuu tests
+   python -m pytest -q
+7. If tests pass, launch:
+   python gui_entry.py
+
+The patch changes the GUI's small running-kitten drawing and bumps package metadata to 4.1.1.
+It does not include user data, local models, or virtual-environment contents.

@@ -1,3 +1,27 @@
+## v4.1.1 — Cute kitten animation refinement
+
+- Replaced the previous angular silhouette with a rounded, chibi-style kitten: oversized soft face, small pink inner ears and cheeks, tiny eyes and nose, and a curled tail.
+- Kept the character deliberately small on a 120×30 canvas so the activity indicator stays visually secondary to the conversation.
+- Added a four-phase alternating paw cycle and subtle body bounce.
+- No new dependencies; animation remains native Tkinter Canvas drawing.
+- Validation: 251 automated tests pass in the build environment; physical Windows rendering still needs user acceptance.
+
+## v4.1.0 — Compact running-cat indicator and GUI lifecycle hardening
+
+- Reduced the animated cat to a small 31×20 drawing on a 150×30 canvas, keeping the processing feedback visible without dominating the chat composer.
+- Prevented duplicate animation loops when the voice UI changes from listening to thinking.
+- Added regression coverage for animation scheduling, timer replacement and cancellation.
+- Added a project audit report that separates verified source/test results from physical Windows acceptance requirements.
+- Validation: 250 automated tests pass in the build environment; physical Windows hardware acceptance remains required.
+
+## v4.0.1 — Animated response feedback
+
+- Added a dependency-free animated running-cat indicator to the desktop GUI while text and voice requests are being processed.
+- The indicator displays a clear processing/listening message and animated progress dots.
+- The animation starts when a request is accepted, changes from listening to thinking after voice transcription, and stops on both success and error paths.
+- The animation is cancelled during application shutdown; it does not add placeholder messages to conversation history.
+- Added GUI lifecycle regression tests.
+
 # Changelog
 
 ## v4.0.0 — Durable intelligence and recovery

@@ -133,3 +133,79 @@ def test_gui_health_slash_command_uses_local_diagnostics(monkeypatch):
     kind, payload = app.events.get_nowait()
     assert kind == "response"
     assert payload == "health: 3 tools"
+
+
+def test_submit_text_shows_running_cat_until_response(monkeypatch):
+    import threading
+
+    class FakeThread:
+        def __init__(self, *args, **kwargs):
+            self.args = args
+            self.kwargs = kwargs
+
+        def start(self):
+            pass
+
+    app = ChinuuuDesktopApp.__new__(ChinuuuDesktopApp)
+    app.busy = False
+    app.send_button = SimpleNamespace(configure=lambda **_kwargs: None)
+    app._append = lambda *_args: None
+    app._set_status = lambda *_args: None
+    shown = []
+    app._show_thinking = lambda message: shown.append(message)
+    monkeypatch.setattr(threading, "Thread", FakeThread)
+
+    app._submit_text("hello Chinuuu")
+
+    assert app.busy is True
+    assert shown == ["Chinuuu is thinking"]
+
+
+def test_response_event_hides_running_cat():
+    import queue
+
+    class FakeRoot:
+        def after(self, *_args):
+            return "scheduled"
+
+    app = ChinuuuDesktopApp.__new__(ChinuuuDesktopApp)
+    app.events = queue.Queue()
+    app.events.put(("response", "Here is the answer"))
+    app.root = FakeRoot()
+    app.busy = True
+    app.send_button = SimpleNamespace(configure=lambda **_kwargs: None)
+    app._append = lambda *_args: None
+    app._set_status = lambda *_args: None
+    app._restart_wakeword = lambda: None
+    hidden = []
+    app._hide_thinking = lambda: hidden.append(True)
+
+    app._drain_events()
+
+    assert hidden == [True]
+    assert app.busy is False
+
+
+def test_error_event_hides_running_cat():
+    import queue
+
+    class FakeRoot:
+        def after(self, *_args):
+            return "scheduled"
+
+    app = ChinuuuDesktopApp.__new__(ChinuuuDesktopApp)
+    app.events = queue.Queue()
+    app.events.put(("error", "Model unavailable"))
+    app.root = FakeRoot()
+    app.busy = True
+    app.send_button = SimpleNamespace(configure=lambda **_kwargs: None)
+    app._append = lambda *_args: None
+    app._set_status = lambda *_args: None
+    app._restart_wakeword = lambda: None
+    hidden = []
+    app._hide_thinking = lambda: hidden.append(True)
+
+    app._drain_events()
+
+    assert hidden == [True]
+    assert app.busy is False
