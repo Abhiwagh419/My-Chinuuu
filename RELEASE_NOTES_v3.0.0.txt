@@ -1,0 +1,22 @@
+CHINUUU v3.0.0 — LOCAL CONTROL CENTER
+
+Major addition
+- Adds a desktop Control Center reachable from the GUI header.
+- Tasks tab: create tasks, review open/completed items, and mark a selected task complete.
+- Memory Review tab: inspect approved memories and pending adaptive-memory suggestions; approve or reject pending suggestions with an explicit confirmation.
+- Agent Activity tab: inspect recent agent runs and tool audit events.
+- All Control Center views use the existing local SQLite database; no cloud account or sync is introduced.
+
+Safety and data handling
+- The Control Center does not expose arbitrary shell execution.
+- Memory suggestions remain pending until explicitly approved or rejected.
+- Existing approved memories are read-only in this interface; deletion/editing is not exposed here.
+- Task completion is a state change; no bulk deletion is offered.
+- Existing database, config, workspace, virtual environment and model data are preserved by update patches.
+
+Validation
+- 233 automated tests passed in the build environment.
+- Python compileall passed.
+- v3.0.0 patch replayed over a clean v2.0.2 source snapshot: 233 tests passed.
+- Wheel built successfully with locally available build tooling.
+- Tk GUI interactions and target Windows desktop rendering still require acceptance testing on the user's HP Victus.

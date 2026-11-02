@@ -1,0 +1,23 @@
+CHINUUU v2.0.2 — WINDOWS DIAGNOSTICS AND BRIGHTNESS DRIVER FIX
+
+Fixes
+- Supports Windows laptop WMI brightness providers that apply the requested level but return a null method status. A null status is accepted only when every brightness controller reads back the requested value.
+- Explicit non-zero statuses, incomplete structured output, controller-count mismatches and read-back mismatches remain failures.
+- Uses a structured JSON result from PowerShell rather than fragile delimiter parsing.
+- Correctly handles /system, /time and /processes in the desktop GUI without passing application commands to the language model.
+- The GUI System status button now returns the local read-only system report.
+
+Validation
+- Full automated suite: 231 passed in the Linux build environment.
+- Windows hardware acceptance is still required on the target HP Victus.
+
+Update from v2.0.1
+1. Close Chinuuu CLI and GUI.
+2. Back up the project folder.
+3. Extract the update patch into the existing project folder, replacing source files.
+4. Preserve config.toml, data/, workspace/ and .venv/.
+5. Activate the existing virtual environment.
+6. Run: python -m pip install -e ".[dev,windows,documents,voice,wakeword,installer]"
+7. Run: python -m compileall -q chinuuu tests
+8. Run: python -m pytest -q
+9. Launch: python gui_entry.py

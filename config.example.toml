@@ -1,0 +1,47 @@
+[assistant]
+name = "Chinuuu"
+operator_name = "Abhi"
+model = "qwen3:4b-instruct"
+ollama_url = "http://127.0.0.1:11434"
+context_messages = 12
+context_summary_interval = 24
+context_window = 8192
+temperature = 0.5
+
+[memory]
+enabled = true
+auto_suggest_preferences = true
+require_confirmation = true
+behavior_threshold = 3
+behavior_window_days = 30
+
+[security]
+allow_arbitrary_shell = false
+# Public search/page extraction sends the exact confirmed query or URL externally.
+allow_external_network_tools = false
+
+[tools]
+workspace_root = "workspace"
+max_tool_rounds = 4
+max_tool_calls = 8
+
+[apps]
+# Custom application aliases should point to exact executable paths you trust.
+# vscode = "C:/Program Files/Microsoft VS Code/Code.exe"
+
+[voice]
+# Offline push-to-talk: supply a local faster-whisper model directory.
+model_path = "models/faster-whisper-small"
+speak_responses = false
+# Always-listening wake-word mode is disabled by default.
+wakeword_enabled = false
+wakeword_model_path = "models/wakeword.onnx"
+
+[productivity]
+# Reminder notifications run only while Chinuuu is open.
+reminder_poll_seconds = 10
+
+[knowledge]
+# Optional local semantic retrieval. Install locally with: ollama pull nomic-embed-text
+# Leave empty to use SQLite full-text retrieval only. Embedding inference is CPU-only.
+embedding_model = ""
